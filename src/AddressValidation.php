@@ -192,10 +192,8 @@ class AddressValidation extends Ups
                 $addressNode->appendChild($xml->createElement('AddressLine', $this->address->getAddressLine3()));
             }
             if ($this->address->getStateProvinceCode()) {
-                $addressNode->appendChild($xml->createElement(
-                    'PoliticalDivision1',
-                    $this->address->getStateProvinceCode()
-                ));
+                $addressNode->appendChild($xml->createElement('PoliticalDivision1',
+                    $this->address->getStateProvinceCode()));
             }
             if ($this->address->getCity()) {
                 $addressNode->appendChild($xml->createElement('PoliticalDivision2', $this->address->getCity()));

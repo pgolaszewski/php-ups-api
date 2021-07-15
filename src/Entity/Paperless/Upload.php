@@ -9,7 +9,10 @@ namespace Ups\Entity\Paperless;
  */
 class Upload
 {
-    protected UserCreatedForm $userCreatedForms;
+    /**
+     * @var UserCreatedForm[]
+     */
+    protected array $userCreatedForms;
 
     protected string $shipperNumber;
 
@@ -20,7 +23,7 @@ class Upload
         return $this;
     }
 
-    public function getUserCreatedForms(): UserCreatedForm
+    public function getUserCreatedForms(): array
     {
         return $this->userCreatedForms;
     }

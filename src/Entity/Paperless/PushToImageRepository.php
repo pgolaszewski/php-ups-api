@@ -8,8 +8,8 @@ namespace Ups\Entity\Paperless;
  */
 class PushToImageRepository
 {
-    public const SHIPMENT_TYPE_SMALL_PACKAGE    = 1;
-    public const SHIPMENT_TYPE_FREIGHT_SHIPMENT = 2;
+    public const SHIPMENT_TYPE_SMALL_PACKAGE    = '1';
+    public const SHIPMENT_TYPE_FREIGHT_SHIPMENT = '2';
 
     protected string $shipmentIdentifier;
 
@@ -17,7 +17,7 @@ class PushToImageRepository
 
     protected string $shipmentDateAndTime;
 
-    protected int $shipmentType;
+    protected string $shipmentType;
 
     protected string $customerContext = '';
 
@@ -61,12 +61,12 @@ class PushToImageRepository
         return $this;
     }
 
-    public function getShipmentType(): int
+    public function getShipmentType(): string
     {
         return $this->shipmentType;
     }
 
-    public function setShipmentType(int $shipmentType): self
+    public function setShipmentType(string $shipmentType): self
     {
         $this->shipmentType = $shipmentType;
 

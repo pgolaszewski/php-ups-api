@@ -36,25 +36,13 @@ class UserCreatedForm
     const DOCUMENT_TYPE_SHIPPERS_LETTER_OF_INSTRUCTION = '012';
     const DOCUMENT_TYPE_DECLARATION = '013';
 
-    /**
-     * @var string
-     */
-    protected $userCreatedFormFileName;
+    protected string $userCreatedFormFileName;
 
-    /**
-     * @var string
-     */
-    protected $userCreatedFormFile;
+    protected string $userCreatedFormFile;
 
-    /**
-     * @var string
-     */
-    protected $userCreatedFormFileFormat;
+    protected string $userCreatedFormFileFormat;
 
-    /**
-     * @var string
-     */
-    protected $userCreatedFormDocumentType;
+    protected string $userCreatedFormDocumentType;
 
     /**
      * @return mixed

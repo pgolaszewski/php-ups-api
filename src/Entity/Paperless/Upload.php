@@ -9,59 +9,35 @@ namespace Ups\Entity\Paperless;
  */
 class Upload
 {
-    /**
-     * @var UserCreatedForm
-     */
-    protected $userCreatedForms;
+    protected UserCreatedForm $userCreatedForms;
 
-    /**
-     * @var string
-     */
-    protected $shipperNumber;
+    protected string $shipperNumber;
 
-    /**
-     * @param UserCreatedForm $userCreatedForm
-     * @return $this
-     */
-    public function addUserCreatedForm(UserCreatedForm $userCreatedForm)
+    public function addUserCreatedForm(UserCreatedForm $userCreatedForm): self
     {
         $this->userCreatedForms[] = $userCreatedForm;
 
         return $this;
     }
 
-    /**
-     * @return UserCreatedForm
-     */
-    public function getUserCreatedForms()
+    public function getUserCreatedForms(): UserCreatedForm
     {
         return $this->userCreatedForms;
     }
 
-    /**
-     * @param array $userCreatedForm
-     * @return Upload
-     */
-    public function setUserCreatedForm(array $userCreatedForms)
+    public function setUserCreatedForm(array $userCreatedForms): self
     {
         $this->userCreatedForms = $userCreatedForms;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getShipperNumber()
+    public function getShipperNumber(): string
     {
         return $this->shipperNumber;
     }
 
-    /**
-     * @param string $shipperNumber
-     * @return Upload
-     */
-    public function setShipperNumber($shipperNumber)
+    public function setShipperNumber(string $shipperNumber): self
     {
         $this->shipperNumber = $shipperNumber;
 

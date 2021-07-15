@@ -118,7 +118,7 @@ class Paperless
     {
         return [
             'UPSSecurity'                  => $this->createUpsSecurity(),
-            'PushToImageRepository' => [
+            'PushToImageRepositoryRequest' => [
                 'Request'                => [
                     'RequestOption' => $requestOption,
                     'TransactionReference' => [

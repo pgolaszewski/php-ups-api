@@ -4,6 +4,7 @@
 namespace Ups;
 
 use GuzzleHttp\Client;
+use Psr\Http\Message\ResponseInterface;
 use Ups\Entity\Paperless\PushToImageRepository;
 use Ups\Entity\Paperless\Upload;
 use Ups\Entity\Paperless\UserCreatedForm;
@@ -45,20 +46,9 @@ class Paperless
         $payload  = $this->createPayload($uploadRequest, $requestOption);
         $guzzle   = new Client();
         $response = $guzzle->post($this->getUri(), ['body' => json_encode($payload)]);
-        $response = json_decode($response->getBody()->getContents());
 
-        if (isset($response->Fault)) {
-            $errors = '';
-            foreach ($response->Fault->detail->Errors as $ErrorDetail) {
-                $errors = '[' . $ErrorDetail->Severity . ';  ' . implode(' => ', (array)$ErrorDetail->PrimaryErrorCode) . ']';
-            }
+        return $this->getResponse($response);
 
-            throw new RequestException(
-                "Failure ({$response->Fault->faultcode}): {$response->Fault->faultstring}" . $errors
-            );
-        } else {
-            return $response;
-        }
     }
 
     protected function createPayload(Upload $request, string $requestOption): array
@@ -124,7 +114,7 @@ class Paperless
         $guzzle   = new Client();
         $response = $guzzle->post($this->getUri(), ['body' => json_encode($payload)]);
 
-        return json_decode($response->getBody()->getContents());
+        return $this->getResponse($response);
     }
 
     protected function createPushToImageRepositoryPayload(PushToImageRepository $request, string $requestOption): array
@@ -149,5 +139,23 @@ class Paperless
                 'ShipperNumber'          => $this->shipperNumber,
             ]
         ];
+    }
+
+    protected function getResponse(ResponseInterface $response): string
+    {
+        $response = json_decode($response->getBody()->getContents());
+
+        if (isset($response->Fault)) {
+            $errors = '';
+            foreach ($response->Fault->detail->Errors as $ErrorDetail) {
+                $errors = '[' . $ErrorDetail->Severity . ';  ' . implode(' => ', (array)$ErrorDetail->PrimaryErrorCode) . ']';
+            }
+
+            throw new RequestException(
+                "Failure ({$response->Fault->faultcode}): {$response->Fault->faultstring}" . $errors
+            );
+        } else {
+            return $response;
+        }
     }
 }

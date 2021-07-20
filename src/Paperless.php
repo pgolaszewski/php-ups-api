@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use Ups\Entity\Paperless\PushToImageRepository;
 use Ups\Entity\Paperless\Upload;
 use Ups\Entity\Paperless\UserCreatedForm;
+use Ups\Exception\RequestException;
 
 /**
  * @author    Maciej Kotlarz <maciej.kotlarz@pixers.uk>
@@ -44,8 +45,20 @@ class Paperless
         $payload  = $this->createPayload($uploadRequest, $requestOption);
         $guzzle   = new Client();
         $response = $guzzle->post($this->getUri(), ['body' => json_encode($payload)]);
+        $response = json_decode($response->getBody()->getContents());
 
-        return json_decode($response->getBody()->getContents());
+        if (isset($response->Fault)) {
+            $errors = '';
+            foreach ($response->Fault->detail->Errors as $ErrorDetail) {
+                $errors = '[' . $ErrorDetail->Severity . ';  ' . implode(' => ', (array)$ErrorDetail->PrimaryErrorCode) . ']';
+            }
+
+            throw new RequestException(
+                "Failure ({$response->Fault->faultcode}): {$response->Fault->faultstring}" . $errors
+            );
+        } else {
+            return $response;
+        }
     }
 
     protected function createPayload(Upload $request, string $requestOption): array
@@ -105,7 +118,7 @@ class Paperless
     /**
      * @return mixed
      */
-    public function push(PushToImageRepository $PushToImageRepository, string $requestOption  = '')
+    public function push(PushToImageRepository $PushToImageRepository, string $requestOption = '')
     {
         $payload  = $this->createPushToImageRepositoryPayload($PushToImageRepository, $requestOption);
         $guzzle   = new Client();
@@ -120,9 +133,9 @@ class Paperless
             'UPSSecurity'                  => $this->createUpsSecurity(),
             'PushToImageRepositoryRequest' => [
                 'Request'                => [
-                    'RequestOption' => $requestOption,
+                    'RequestOption'        => $requestOption,
                     'TransactionReference' => [
-                        'CustomerContext' => $request->getCustomerContext(),
+                        'CustomerContext'       => $request->getCustomerContext(),
                         'TransactionIdentifier' => $request->getTransactionIdentifier()
                     ]
                 ],

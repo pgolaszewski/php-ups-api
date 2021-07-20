@@ -141,21 +141,31 @@ class Paperless
         ];
     }
 
-    protected function getResponse(ResponseInterface $response): string
+    protected function getResponse(ResponseInterface $response): object
     {
-        $response = json_decode($response->getBody()->getContents());
+        $responseContent = json_decode($response->getBody()->getContents());
 
-        if (isset($response->Fault)) {
-            $errors = '';
-            foreach ($response->Fault->detail->Errors as $ErrorDetail) {
-                $errors = '[' . $ErrorDetail->Severity . ';  ' . implode(' => ', (array)$ErrorDetail->PrimaryErrorCode) . ']';
+        $httpStatus = $response->getHeader('APIHttpStatus');
+        $errorCode  = $response->getHeader('APIErrorCode');
+
+        if (isset($httpStatus, $errorCode)) {
+            if ($httpStatus[0] !== '200' && $errorCode[0] === '9590022' && $this->useIntegration === true) {
+                // do not throw error on sandbox with 9590022 code
+            } else {
+                if ($httpStatus[0] !== '200') {
+                    $errors = '';
+
+                    foreach ($responseContent->Fault->detail->Errors as $ErrorDetail) {
+                        $errors = '[' . $ErrorDetail->Severity . ';  ' . implode(' => ', (array)$ErrorDetail->PrimaryErrorCode) . ']';
+                    }
+
+                    throw new RequestException(
+                        "Failure ({$responseContent->Fault->faultcode}): {$responseContent->Fault->faultstring}" . $errors
+                    );
+                }
             }
-
-            throw new RequestException(
-                "Failure ({$response->Fault->faultcode}): {$response->Fault->faultstring}" . $errors
-            );
-        } else {
-            return $response;
         }
+
+        return $responseContent;
     }
 }
